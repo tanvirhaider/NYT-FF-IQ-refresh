@@ -6,9 +6,6 @@
 // @codekit-prepend "creativeConfigObj.js"
 
 
-/*------------------------*/
-/*-----> VARIABLES  <-----*/
-/*------------------------*/
 var creativeId = "HTMLResponsiveRichMediaBanner";
 var creativeVersion = "1.1.0";
 var lastModified = "2017-02-07";
@@ -28,15 +25,6 @@ var mobileCurrentGalleryFrame = 1;
 var desktopTotalGalleryFrames;
 var desktopCurrentGalleryFrame = 1;
 var desktopGalleryFramePosArr = [];
-
-var isIE10 = (navigator.userAgent.indexOf("MSIE 10") !== -1)?true:false;
-
-
-/*------------------------------*/
-/*-----> TEMPLATE CONFIG  <-----*/
-/*------------------------------*/
-
-
 
 
 function checkIfAdKitReady(event) {
@@ -92,24 +80,9 @@ function getFeed(url, version){
     }
 }
 
-// Call JSON or XML type feed via AJAX request
 function callAJAX(url, version){
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function(){
-        if(this.readyState === 4){
-            if(this.status === 200){ // Status 200 = successful HTTP requests, pass returned data for check/use
-                if(version === "json"){
-                    // Due to browser compatibility issues do not use XMLHttpRequest.responseType("json") for JSON feed
-                    // JSON returns should be received as text and parsed as per below to JSON
-                    handleReturnedFeedData(JSON.parse(xhttp.responseText));
-                }else{
-                    handleReturnedFeedData(xhttp.responseXML);
-                }
-            }else if(this.status >= 400){ // status of 400 and above are error codes, fire failsafe on error
-                goFailsafe();
-            }
-        }
-    };
+    xhttp.onreadystatechange = function(){ if(this.readyState === 4){ if(this.status === 200){ if(version === "json"){ handleReturnedFeedData(JSON.parse(xhttp.responseText)); }else{ handleReturnedFeedData(xhttp.responseXML); } }else if(this.status >= 400){  goFailsafe();} } };
     xhttp.open("GET", url, true);
     xhttp.send();
 }
@@ -136,23 +109,65 @@ function handleReturnedFeedData(data){
 }
 
 function populateConfigObjArticleFramesWithFeedData(data) {
+
     var dataArray = null;
-    if (creativeConfigObj.feedVersion === "xml"){
-        dataArray = data.getElementsByTagName("item");
-        for(var i=0; i<creativeConfigObj.articleFrames.length; i++){
-            creativeConfigObj.articleFrames[i].headline = {copy:dataArray[i].getElementsByTagName("promotionalHeadline")[0].childNodes[0].nodeValue, color: "#FFF"};
-            creativeConfigObj.articleFrames[i].url = dataArray[i].getElementsByTagName("link")[0].childNodes[0].nodeValue;
-            creativeConfigObj.articleFrames[i].descriptor = {copy:dataArray[i].getElementsByTagName("description")[0].childNodes[0].nodeValue, color: "#FFF"};
-        }
-    }else{
-        dataArray = (creativeConfigObj.feedVersion === "xml_jsonp_mirror")?data["rss"]["channel"]["item"]:data["data"]["anyWorks"];
-        for(var i=0; i<creativeConfigObj.articleFrames.length; i++){
-            creativeConfigObj.articleFrames[i].headline = {copy :(creativeConfigObj.feedVersion === "xml_jsonp_mirror")?dataArray[i]["promotionalHeadline"]["$t"]:dataArray[i]["promotionalHeadline"], color: "#FFF"};
-            var rei = creativeConfigObj.articleFrames[i].logo.url = (creativeConfigObj.feedVersion === "xml_jsonp_mirror")?dataArray[i]['promotionalMedia']["$t"]:dataArray[i]['promotionalMedia']['crops'][0]['renditions'][0]['url']; 
-            creativeConfigObj.articleFrames[i].url = (creativeConfigObj.feedVersion === "xml_jsonp_mirror")?dataArray[i]["link"]["$t"]:dataArray[i]["url"]; 
-            if (dataArray[i]['promotionalMedia']['__typename'] !== "Image") {}     
-        }
+    console.group("dataFromFeed");
+    console.log("data: ",data.data.anyWorks);
+    var numberOfItem = data.data.anyWorks.length;
+    console.log("number of item: ",numberOfItem);
+
+    for (var i = 0; i < numberOfItem; i++) {
+
+
+        creativeConfigObj.articleFrames[i].headline = {
+            copy:data.data.anyWorks[i].promotionalHeadline, 
+            color: "#FFF"
+        };
+
+        creativeConfigObj.articleFrames[i].headline
+        creativeConfigObj.articleFrames[i].url = data.data.anyWorks[i].url;
+        creativeConfigObj.articleFrames[i].logo.url = data.data.anyWorks[i].promotionalMedia.crops[0].renditions[0].url;
+        // console.log("each item: ", data.data.anyWorks[i]);
+        // console.log("headline:", data.data.anyWorks[i].promotionalHeadline);
+        // console.log("url:", data.data.anyWorks[i].url);
+        // console.log("uri:", data.data.anyWorks[i].uri);
+        // console.log("promotionalMedia:", data.data.anyWorks[i].promotionalMedia.crops[0].renditions[0].url);
+
+        
     }
+
+
+    // var dataArray = null;
+    // var headerCopyContent;
+    // if (creativeConfigObj.feedVersion === "xml"){
+    //     dataArray = data.getElementsByTagName("item");
+    //     for(var i= 0; i < creativeConfigObj.articleFrames.length; i++){
+
+    //         try { headerCopyContent = dataArray[i].getElementsByTagName("promotionalHeadline")[0].childNodes[0].nodeValue;}
+    //         catch (Error) {headerCopyContent = "error"};
+
+    //         creativeConfigObj.articleFrames[i].headline = {
+    //             copy:headerCopyContent, 
+    //             color: "#FFF"
+    //         };
+
+    //         creativeConfigObj.articleFrames[i].url = dataArray[i].getElementsByTagName("link")[0].childNodes[0].nodeValue;
+    //         creativeConfigObj.articleFrames[i].descriptor = {copy:dataArray[i].getElementsByTagName("description")[0].childNodes[0].nodeValue, color: "#FFF"};
+    //     }
+    // }else{
+    //     dataArray = (creativeConfigObj.feedVersion === "xml_jsonp_mirror")?data["rss"]["channel"]["item"]:data["data"]["anyWorks"];
+    //     for(var i=0; i<creativeConfigObj.articleFrames.length; i++){
+    //         creativeConfigObj.articleFrames[i].headline = {
+    //            // copy :(creativeConfigObj.feedVersion === "xml_jsonp_mirror")?dataArray[i]["promotionalHeadline"]["$t"]:dataArray[i]["promotionalHeadline"], 
+    //             copy :"demo", 
+    //             color: "#FFF"
+    //         };
+
+    //         var rei = creativeConfigObj.articleFrames[i].logo.url = (creativeConfigObj.feedVersion === "xml_jsonp_mirror")?dataArray[i]['promotionalMedia']["$t"]:dataArray[i]['promotionalMedia']['crops'][0]['renditions'][0]['url']; 
+    //         creativeConfigObj.articleFrames[i].url = (creativeConfigObj.feedVersion === "xml_jsonp_mirror")?dataArray[i]["link"]["$t"]:dataArray[i]["url"]; 
+    //         if (dataArray[i]['promotionalMedia']['__typename'] !== "Image") {}     
+    //     }
+    // }
 }
 
 
@@ -170,7 +185,7 @@ function goFailsafe(){
 function goCreative(){
     document.getElementById("contentContainer").style.display = "block";
     setCreativeElements();
-    positionCreativeElements();
+   // positionCreativeElements();
     addEventListeners();
 
 }
@@ -268,7 +283,7 @@ function addEventListeners(){
     document.getElementById("desktopRightArrowBtn").addEventListener("click", onDesktopRightArrowClk, false);
 
     var bgClks = document.getElementsByClassName("genClk");
-    for(var i=0; i<bgClks.length; i++){ bgClks[i].addEventListener("click", onBgClk, false); }
+    for(var i=0; i< bgClks.length; i++){ bgClks[i].addEventListener("click", onBgClk, false); }
 }
 
 
@@ -282,7 +297,7 @@ function createFramesDesktop (heroFrameObj, articleFramesObj) {
     console.group("createSlideshow");
     var frameNum = 0;
     document.getElementById("desktopHeroContainer").appendChild(createHeroFrame(frameNum, "desktop", heroFrameObj.backgroundImageURL.desktop, heroFrameObj.kicker, heroFrameObj.headline, heroFrameObj.descriptor, heroFrameObj.logo));
-    for(var i=0; i< articleFramesObj.length; i++){
+    for(var i=0; i < articleFramesObj.length; i++){
         frameNum++;
         document.getElementById("desktopGallery").appendChild(createArticleFrame(frameNum, "desktop", articleFramesObj[i].kicker, articleFramesObj[i].headline, articleFramesObj[i].descriptor,  articleFramesObj[i].cta, articleFramesObj[i].logo));
     }
@@ -320,7 +335,7 @@ function createFramesDesktop (heroFrameObj, articleFramesObj) {
 
 function populateDesktopGalleryFramePosArr(totalNumFrames){
     for(var i=0; i<totalNumFrames; i++){desktopGalleryFramePosArr.push("desktop_frame_" + (i+1));}
-    updateDesktopGalleryPosTrackerArr("prev");
+ //   updateDesktopGalleryPosTrackerArr("prev");
     console.log(desktopGalleryFramePosArr);
 }
 
@@ -485,52 +500,7 @@ function desktopGoNextFrame(){
 }
 
 
-function updateDesktopGalleryPosTrackerArr(navDirection){
-    var temp;
 
-    if(navDirection === "next"){
-        temp = desktopGalleryFramePosArr.shift();
-        desktopGalleryFramePosArr.push(temp);
-    }else if(navDirection === "prev"){
-        temp = desktopGalleryFramePosArr.pop();
-        desktopGalleryFramePosArr.unshift(temp);
-    }else{
-        console.log("updateDesktopGalleryPosTrackerArr \"navDirection\" parameter invalid!");
-    }
-}
-
-function desktopGalleryAnimate(navDirection){
-
-    var newStagePos = 0;    // calculated position to translate gallery frame to
-    var arr = desktopGalleryFramePosArr;
-    var travel = document.getElementById(arr[0]).offsetWidth;
-
-    updateDesktopGalleryPosTrackerArr(navDirection);
-
-    for(var i=0; i<arr.length; i++){
-        newStagePos = (i-1);
-        document.getElementById(arr[i]).style.zIndex = "10";
-
-        if(navDirection === "next"){ if(newStagePos === arr.length-2) { document.getElementById(arr[i]).style.zIndex = "0"; } }
-        else{ if(newStagePos === -1){ document.getElementById(arr[i]).style.zIndex = "0"; } }
-
-        setNewPos(arr[i], newStagePos);
-    }
-
-    function setNewPos(elemID, pos){
-        var elem = document.getElementById(elemID);
-        if(pos === 0 || pos === 1){
-            elem.addEventListener("mouseenter", showDesktopLeftNav, false);
-            elem.addEventListener("mouseleave", hideDesktopLeftNav, false);
-            elem.setAttribute("activateNavigationArrow", "true");
-        }
-        else if(elem.getAttribute("activateNavigationArrow") === "true"){
-            elem.setAttribute("activateNavigationArrow", "false");
-            elem.removeEventListener("mouseenter", showDesktopLeftNav, false);
-        }
-    }
-
-}
 
 
 

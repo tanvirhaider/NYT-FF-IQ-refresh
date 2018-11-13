@@ -194,7 +194,7 @@
 		"oAP": "/build/scripts/app.js",
 		"oF": 2,
 		"sC": 3,
-		"tS": 0
+		"tS": 1
 		},
 	"/app/scripts/creativeConfigObj.js": {
 		"ft": 64,
@@ -273,16 +273,6 @@
 		"oA": 1,
 		"oAP": "/build/scripts/slick.min-min.js",
 		"oF": 1,
-		"sC": 3,
-		"tS": 0
-		},
-	"/app/scripts/templateSettings.js": {
-		"ft": 64,
-		"ma": 0,
-		"mi": 1,
-		"oA": 0,
-		"oAP": "/build/scripts/templateSettings-min.js",
-		"oF": 0,
 		"sC": 3,
 		"tS": 0
 		},
