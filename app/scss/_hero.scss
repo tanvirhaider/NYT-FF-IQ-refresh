@@ -33,6 +33,8 @@
             height: auto;
             position: absolute;
             text-align: left;
+            user-select: none;
+            pointer-events: none;
         
             width: calc(100% - 50px);
             bottom: 25px;
@@ -45,6 +47,8 @@
             font-family: "Proxima N W01 Reg";
             font-size: 13px;
             line-height: 14px;
+            user-select: none;
+            pointer-events: none;
         }
 
         .hero_headline{
@@ -54,6 +58,8 @@
             padding-top: 3px;
             font-size: 27px;
             line-height: 28px;
+            user-select: none;
+            pointer-events: none;
         }
 
         .hero_descriptor{
@@ -63,6 +69,8 @@
             padding-top: 5px;
             font-size: 18px;
             line-height: 19px;
+            user-select: none;
+            pointer-events: none;
         }
 
         .hero_logo{
@@ -73,6 +81,7 @@
             height: 45px;
             max-height: 45px;
             max-width: 145px;
+            pointer-events: none;
         }
         
         

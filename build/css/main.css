@@ -39,7 +39,8 @@ a img {
   user-select: none;
   -ms-touch-action: pan-y;
   touch-action: pan-y;
-  -webkit-tap-highlight-color: transparent; }
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: none; }
 
 .slick-list {
   position: relative;
@@ -67,7 +68,8 @@ a img {
   top: 0;
   display: block;
   margin-left: auto;
-  margin-right: auto; }
+  margin-right: auto;
+  pointer-events: none; }
   .slick-track:before, .slick-track:after {
     content: "";
     display: table; }
@@ -77,12 +79,15 @@ a img {
     visibility: hidden; }
 
 .slick-slide {
+  pointer-events: none;
   float: left;
   height: 100%;
   min-height: 200px;
   display: none; }
   [dir="rtl"] .slick-slide {
     float: right; }
+  .slick-slide div {
+    pointer-events: none; }
   .slick-slide img {
     display: block; }
   .slick-slide.slick-loading img {
@@ -240,9 +245,6 @@ body {
   -webkit-text-size-adjust: none;
   zoom: 100%; }
 
-/* --------------------- */
-/* -----> GENERAL <----- */
-/* --------------------- */
 #adWrapper {
   width: 100%;
   height: 100%;
@@ -323,6 +325,8 @@ body {
         height: auto;
         position: absolute;
         text-align: left;
+        user-select: none;
+        pointer-events: none;
         width: calc(100% - 50px);
         bottom: 25px;
         left: 25px; }
@@ -331,21 +335,27 @@ body {
         height: auto;
         font-family: "Proxima N W01 Reg";
         font-size: 13px;
-        line-height: 14px; }
+        line-height: 14px;
+        user-select: none;
+        pointer-events: none; }
       #desktopContainer #desktopHeroContainer .hero .hero_headline {
         width: auto;
         height: auto;
         font-family: "Proxima N W02 Smbd";
         padding-top: 3px;
         font-size: 27px;
-        line-height: 28px; }
+        line-height: 28px;
+        user-select: none;
+        pointer-events: none; }
       #desktopContainer #desktopHeroContainer .hero .hero_descriptor {
         width: auto;
         height: auto;
         font-family: "Proxima N W01 Reg";
         padding-top: 5px;
         font-size: 18px;
-        line-height: 19px; }
+        line-height: 19px;
+        user-select: none;
+        pointer-events: none; }
       #desktopContainer #desktopHeroContainer .hero .hero_logo {
         position: absolute;
         z-index: 200;
@@ -353,7 +363,8 @@ body {
         left: 25px;
         height: 45px;
         max-height: 45px;
-        max-width: 145px; }
+        max-width: 145px;
+        pointer-events: none; }
       #desktopContainer #desktopHeroContainer .hero .hero_logo img {
         width: auto;
         height: 45px;
@@ -363,7 +374,8 @@ body {
     position: absolute;
     height: 100%;
     right: 0px;
-    width: 650px; }
+    width: 650px;
+    pointer-events: none; }
     #desktopContainer #dArticleContainer .common-nav-attributes, #desktopContainer #dArticleContainer #desktopLeftArrowContainer, #desktopContainer #dArticleContainer #desktopRightArrowContainer {
       width: 40px;
       height: 100%;
@@ -451,13 +463,15 @@ body {
         position: relative;
         height: 100%;
         min-height: 188px;
-        box-sizing: border-box; }
+        box-sizing: border-box;
+        pointer-events: auto; }
         #desktopContainer #dArticleContainer #desktopGallery .frame .article_logo {
           width: calc(100% - 15px);
           margin-left: auto;
           margin-right: auto;
           position: relative;
-          height: 88px; }
+          height: 88px;
+          pointer-events: none; }
           #desktopContainer #dArticleContainer #desktopGallery .frame .article_logo img {
             width: 100%;
             height: 100%;
@@ -475,7 +489,9 @@ body {
           box-sizing: border-box;
           padding-left: 15px;
           padding-top: 10px;
-          padding-right: 15px; }
+          padding-right: 15px;
+          user-select: none;
+          pointer-events: none; }
           #desktopContainer #dArticleContainer #desktopGallery .frame .article_copyContainer .article_kicker {
             width: auto;
             height: auto;

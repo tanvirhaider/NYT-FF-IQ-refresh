@@ -199,10 +199,10 @@
 	"/app/scripts/creativeConfigObj.js": {
 		"ft": 64,
 		"ma": 0,
-		"mi": 1,
-		"oA": 1,
-		"oAP": "/build/scripts/creativeConfigObj-min.js",
-		"oF": 0,
+		"mi": 0,
+		"oA": 0,
+		"oAP": "/build/scripts/creativeConfigObj.js",
+		"oF": 2,
 		"sC": 3,
 		"tS": 0
 		},

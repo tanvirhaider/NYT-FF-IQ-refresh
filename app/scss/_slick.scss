@@ -13,6 +13,7 @@
     -ms-touch-action: pan-y;
     touch-action: pan-y;
     -webkit-tap-highlight-color: transparent;
+    pointer-events: none;
 }
 .slick-list {
     position: relative;
@@ -46,6 +47,7 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
+    pointer-events: none;
 
     &:before,
     &:after {
@@ -62,11 +64,16 @@
     }
 }
 .slick-slide {
+    pointer-events: none;
     float: left;
     height: 100%;
     min-height: 200px;
     [dir="rtl"] & {
         float: right;
+    }
+
+    div {
+        pointer-events: none;
     }
     img {
         display: block;

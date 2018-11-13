@@ -3,7 +3,6 @@
 
 // @codekit-prepend "jquery-3.3.1.min.js"
 // @codekit-prepend "slick.js"
-// @codekit-prepend "creativeConfigObj.js"
 
 
 var creativeId = "HTMLResponsiveRichMediaBanner";
@@ -15,8 +14,8 @@ var templateName = "cf_deluxe_banner_flex_frame_iq_1x1_" + creativeVersion + "_6
 var scrollPos = {x:undefined, y:undefined};
 var adId, rnd, uid, versionID;
 
-var feedCallBackFailsafeTimer; // Vairable to hold timeout for tritggering of failsafe
-var failsafeDuration = 3000;   // Duration of time without response from data feed call to triggering of failsafe
+var feedCallBackFailsafeTimer; 
+var failsafeDuration = 3000; 
 var dataArray; 
 
 var mobileTotalGalleryFrames;
@@ -25,6 +24,7 @@ var mobileCurrentGalleryFrame = 1;
 var desktopTotalGalleryFrames;
 var desktopCurrentGalleryFrame = 1;
 var desktopGalleryFramePosArr = [];
+var totalNumberOfItem;
 
 
 function checkIfAdKitReady(event) {
@@ -41,9 +41,6 @@ function checkIfAdKitReady(event) {
 }
 
 function initializeCreative() {
-	var viewportMeta = document.querySelector('meta[name="viewport"]');
-    viewportMeta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=0");
-    window.setTimeout(function(e){viewportMeta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=0");}, 500);
 	typeof Modernizr == "object" && (Modernizr.touch = Modernizr.touch || "ontouchstart" in window);
     window.EBG.pm.bind("sendCreativeId", function() {eventManager.apply(this, arguments);}, this);
 	window.EBG.pm.bind("eventCallback", function() {eventManager.apply(this, arguments);}, this);
@@ -102,72 +99,25 @@ function iqCallback(data){handleReturnedFeedData(data);}
 
 function handleReturnedFeedData(data){
     window.clearTimeout(feedCallBackFailsafeTimer);
-    if(data !== null && typeof data !== "undefined"){
-        populateConfigObjArticleFramesWithFeedData(data);
-        goCreative();
-    } else{goFailsafe();}
+    if (data !== null && typeof data !== "undefined"){ populateConfigObjArticleFramesWithFeedData(data);} else{goFailsafe();}
 }
 
 function populateConfigObjArticleFramesWithFeedData(data) {
-
-    var dataArray = null;
-    console.group("dataFromFeed");
-    console.log("data: ",data.data.anyWorks);
+    console.log("populateConfigObjArticleFramesWithFeedData");
     var numberOfItem = data.data.anyWorks.length;
-    console.log("number of item: ",numberOfItem);
+    totalNumberOfItem = numberOfItem;
 
     for (var i = 0; i < numberOfItem; i++) {
-
-
         creativeConfigObj.articleFrames[i].headline = {
             copy:data.data.anyWorks[i].promotionalHeadline, 
             color: "#FFF"
         };
-
         creativeConfigObj.articleFrames[i].headline
         creativeConfigObj.articleFrames[i].url = data.data.anyWorks[i].url;
         creativeConfigObj.articleFrames[i].logo.url = data.data.anyWorks[i].promotionalMedia.crops[0].renditions[0].url;
-        // console.log("each item: ", data.data.anyWorks[i]);
-        // console.log("headline:", data.data.anyWorks[i].promotionalHeadline);
-        // console.log("url:", data.data.anyWorks[i].url);
-        // console.log("uri:", data.data.anyWorks[i].uri);
-        // console.log("promotionalMedia:", data.data.anyWorks[i].promotionalMedia.crops[0].renditions[0].url);
-
-        
     }
 
-
-    // var dataArray = null;
-    // var headerCopyContent;
-    // if (creativeConfigObj.feedVersion === "xml"){
-    //     dataArray = data.getElementsByTagName("item");
-    //     for(var i= 0; i < creativeConfigObj.articleFrames.length; i++){
-
-    //         try { headerCopyContent = dataArray[i].getElementsByTagName("promotionalHeadline")[0].childNodes[0].nodeValue;}
-    //         catch (Error) {headerCopyContent = "error"};
-
-    //         creativeConfigObj.articleFrames[i].headline = {
-    //             copy:headerCopyContent, 
-    //             color: "#FFF"
-    //         };
-
-    //         creativeConfigObj.articleFrames[i].url = dataArray[i].getElementsByTagName("link")[0].childNodes[0].nodeValue;
-    //         creativeConfigObj.articleFrames[i].descriptor = {copy:dataArray[i].getElementsByTagName("description")[0].childNodes[0].nodeValue, color: "#FFF"};
-    //     }
-    // }else{
-    //     dataArray = (creativeConfigObj.feedVersion === "xml_jsonp_mirror")?data["rss"]["channel"]["item"]:data["data"]["anyWorks"];
-    //     for(var i=0; i<creativeConfigObj.articleFrames.length; i++){
-    //         creativeConfigObj.articleFrames[i].headline = {
-    //            // copy :(creativeConfigObj.feedVersion === "xml_jsonp_mirror")?dataArray[i]["promotionalHeadline"]["$t"]:dataArray[i]["promotionalHeadline"], 
-    //             copy :"demo", 
-    //             color: "#FFF"
-    //         };
-
-    //         var rei = creativeConfigObj.articleFrames[i].logo.url = (creativeConfigObj.feedVersion === "xml_jsonp_mirror")?dataArray[i]['promotionalMedia']["$t"]:dataArray[i]['promotionalMedia']['crops'][0]['renditions'][0]['url']; 
-    //         creativeConfigObj.articleFrames[i].url = (creativeConfigObj.feedVersion === "xml_jsonp_mirror")?dataArray[i]["link"]["$t"]:dataArray[i]["url"]; 
-    //         if (dataArray[i]['promotionalMedia']['__typename'] !== "Image") {}     
-    //     }
-    // }
+    goCreative();
 }
 
 
@@ -183,15 +133,14 @@ function goFailsafe(){
 }
 
 function goCreative(){
+    console.log("goCreative");
     document.getElementById("contentContainer").style.display = "block";
-    setCreativeElements();
-   // positionCreativeElements();
-    addEventListeners();
-
+    createFramesDesktop(creativeConfigObj.heroFrame, creativeConfigObj.articleFrames);
+    document.getElementById("desktopLeftArrowBtn").addEventListener("mouseenter", showDesktopLeftNav, false);
+    document.getElementById("desktopLeftArrowBtn").addEventListener("click", onDesktopLeftArrowClk, false);
+    document.getElementById("desktopRightArrowBtn").addEventListener("click", onDesktopRightArrowClk, false);
 }
 
-
-function setCreativeElements(){createFrames(creativeConfigObj.heroFrame, creativeConfigObj.articleFrames);}
 
 function positionCreativeElements(){
     window.setTimeout(function(e){
@@ -253,15 +202,11 @@ function trimCopy(div, maxLines){
             }
         }
 
-        // Trim whitespace and add ellipses
         div.innerHTML = divCopy.trim() + "...";
         divHeight = div.offsetHeight;
-
-        // Reset breakout counter and reduce breakout count as max char overage should not exceed the 3 added characters
         breakOutCounter = 0;
         breakOutCount = 4;
 
-        // If additional characters pushed height over the limit repeat trim & measure again untill acceptable height is acheived
         if(divHeight > maxHeight){
             while(divHeight > maxHeight){
                 divCopy = div.innerHTML = divCopy.substring(0, (divCopy.length - 4)).trim() + "...";
@@ -277,33 +222,19 @@ function trimCopy(div, maxLines){
     }
 }
 
-function addEventListeners(){
-    document.getElementById("desktopLeftArrowBtn").addEventListener("mouseenter", showDesktopLeftNav, false);
-    document.getElementById("desktopLeftArrowBtn").addEventListener("click", onDesktopLeftArrowClk, false);
-    document.getElementById("desktopRightArrowBtn").addEventListener("click", onDesktopRightArrowClk, false);
-
-    var bgClks = document.getElementsByClassName("genClk");
-    for(var i=0; i< bgClks.length; i++){ bgClks[i].addEventListener("click", onBgClk, false); }
-}
-
-
-function createFrames(heroFrameObj, articleFramesObj){
-    console.log(articleFramesObj);
-    createFramesDesktop(heroFrameObj, articleFramesObj);
-}
 
 
 function createFramesDesktop (heroFrameObj, articleFramesObj) {
-    console.group("createSlideshow");
+    console.log("createFramesDesktop");
     var frameNum = 0;
     document.getElementById("desktopHeroContainer").appendChild(createHeroFrame(frameNum, "desktop", heroFrameObj.backgroundImageURL.desktop, heroFrameObj.kicker, heroFrameObj.headline, heroFrameObj.descriptor, heroFrameObj.logo));
-    for(var i=0; i < articleFramesObj.length; i++){
+
+    for(var i=0; i < totalNumberOfItem; i++){
         frameNum++;
         document.getElementById("desktopGallery").appendChild(createArticleFrame(frameNum, "desktop", articleFramesObj[i].kicker, articleFramesObj[i].headline, articleFramesObj[i].descriptor,  articleFramesObj[i].cta, articleFramesObj[i].logo));
     }
 
     desktopTotalGalleryFrames = frameNum;
-    populateDesktopGalleryFramePosArr(desktopTotalGalleryFrames);
   
     $('#desktopGallery').slick({
         infinite: true,
@@ -311,6 +242,7 @@ function createFramesDesktop (heroFrameObj, articleFramesObj) {
         slidesToScroll: 1,
         arrows: false,
         dots: false,
+        draggable: false,
         responsive: [
             {
                 breakpoint: 1024,
@@ -327,17 +259,9 @@ function createFramesDesktop (heroFrameObj, articleFramesObj) {
             }
         ]
     });
-
-
 }
 
 
-
-function populateDesktopGalleryFramePosArr(totalNumFrames){
-    for(var i=0; i<totalNumFrames; i++){desktopGalleryFramePosArr.push("desktop_frame_" + (i+1));}
- //   updateDesktopGalleryPosTrackerArr("prev");
-    console.log(desktopGalleryFramePosArr);
-}
 
 function createHeroFrame(frameNum, layout, bgImgURL, kicker, headline, descriptor, logo){
     var frame = document.createElement("div");
@@ -346,6 +270,7 @@ function createHeroFrame(frameNum, layout, bgImgURL, kicker, headline, descripto
     frame.style.backgroundImage = "url(" + bgImgURL + ")";
     frame.style.width = "100%";
 
+    
     var frameGrad = document.createElement("div");
     frameGrad.id = layout + "_frame_" + frameNum + "_grad";
     frameGrad.className = "grad";
@@ -379,12 +304,7 @@ function createHeroFrame(frameNum, layout, bgImgURL, kicker, headline, descripto
         frameCopyContainer.appendChild(frameDescriptor);
     }
 
-    var frameClk = document.createElement("div");
-    frameClk.id = layout + "_frame_" + frameNum + "_click";
-    frameClk.className = "frameClk";
-    if (layout === "mobile"){frameClk.addEventListener("click", onMobileFrameClk, false);}
-    else {frameClk.addEventListener("click", onHeroFrameClk, false);}
-    frame.appendChild(frameClk);
+   
 
     var frameLogoContainer = document.createElement("div");
     frameLogoContainer.id = layout + "_frame_" + frameNum + "_logo";
@@ -397,6 +317,7 @@ function createHeroFrame(frameNum, layout, bgImgURL, kicker, headline, descripto
     frameLogo.src = logo.url;
     frameLogoContainer.appendChild(frameLogo);
 
+    if (frameNum == 0) {frame.addEventListener("click", onHeroFrameClk, false);}
     return frame;
 }
 
@@ -409,30 +330,25 @@ function createArticleFrame(frameNum, layout, kicker, headline, descriptor, cta,
     var frameLogoContainer = document.createElement("div");
     frameLogoContainer.id = layout + "_frame_" + frameNum + "_logo";
     frameLogoContainer.className = "article_logo";
-   // frameLogoContainer.style.height = (layout === "mobile")?logo.mobileHeight:logo.desktopHeight;
     frame.appendChild(frameLogoContainer);
 
     var frameLogo = document.createElement("img");
     frameLogo.id = layout + "_frame_" + frameNum + "_logoImg";
     frameLogo.className = "article_logoImg";
     frameLogo.src = logo.url;
-  //  frameLogo.style.height = (layout === "mobile")?logo.mobileHeight:logo.desktopHeight;
     frameLogoContainer.appendChild(frameLogo);
 
     var frameCopyContainer = document.createElement("div");
     frameCopyContainer.id = layout + "_frame_" + frameNum + "_copy_container";
     frameCopyContainer.className = "article_copyContainer";
-    //frameCopyContainer.style.maxHeight = "calc(100% - 68px - " + logo.height + ")"; // 68 = (25px margin top + 25px margin bottom + 18px spacing from logo bottom per comps)
     frame.appendChild(frameCopyContainer);
 
     var frameKicker = document.createElement("div");
     frameKicker.id = layout + "_frame_" + frameNum + "_kicker";
     frameKicker.className = "article_kicker";
-    frameKicker.innerHTML = (layout === "mobile")?kicker.copy + " | The New York Times":"The New York Times";
+    frameKicker.innerHTML = "The New York Times";
     if(kicker.color !== "" && kicker.color !== null){frameKicker.style.color = kicker.color;}
     frameCopyContainer.appendChild(frameKicker);
-
-
 
     var frameHeadline = document.createElement("div");
     frameHeadline.id = layout + "_frame_" + frameNum + "_headline";
@@ -441,36 +357,7 @@ function createArticleFrame(frameNum, layout, kicker, headline, descriptor, cta,
     if(headline.color !== "" && headline.color !== null){frameHeadline.style.color = headline.color;}
     frameCopyContainer.appendChild(frameHeadline);
 
-
-    if(layout === "mobile" && descriptor !== "" && descriptor !== null && typeof descriptor !== "undefined"){
-        var frameDescriptor = document.createElement("div");
-        frameDescriptor.id = layout + "_frame_" + frameNum + "_descriptor";
-        frameDescriptor.className = "article_descriptor";
-        frameDescriptor.innerHTML = descriptor.copy;
-        if(descriptor.color !== "" && descriptor.color !== null){frameDescriptor.style.color = descriptor.color;}
-        frameCopyContainer.appendChild(frameDescriptor);
-    }
-
-
-    var frameClk = document.createElement("div");
-    frameClk.id = layout + "_frame_" + frameNum + "_click";
-    frameClk.className = "frameClk";
-    if(layout === "mobile"){
-        frameClk.addEventListener("click", onMobileFrameClk, false);
-    }else{
-        frameClk.addEventListener("click", function(e){
-            onDesktopFrameClk(frameNum);
-        }, false);
-    }
-    frame.appendChild(frameClk);
-
-    var frameCta = document.createElement("div");
-    frameCta.id = layout + "_frame_" + frameNum + "_cta";
-    frameCta.className = "article_cta";
-    frameCta.innerHTML = cta.copy;
-    if(cta.color !== "" && cta.color !== null){frameCta.style.color = cta.color;}
-    frameCopyContainer.appendChild(frameCta);
-
+    frame.addEventListener("click", articleClicked, false)
     return frame;
 }
 
@@ -498,9 +385,6 @@ function desktopGoNextFrame(){
     if(nextFrame > desktopTotalGalleryFrames){nextFrame = 1;}
     desktopCurrentGalleryFrame = nextFrame;
 }
-
-
-
 
 
 
@@ -540,6 +424,11 @@ function hideDesktopLeftNav(e){
     setLeftNavActive();
 }
 
+function showHideNav (what) {
+    document.getElementById("desktopLeftArrowContainer").style.display = what;
+    document.getElementById("desktopRightArrowContainer").style.display = what;
+}
+
 
 function onDesktopLeftArrowClk(e){
     console.log("nav left");
@@ -554,47 +443,64 @@ function onDesktopRightArrowClk(e){
 
 
 /*-----> CLICK OUTS <-----*/
+
+function articleClicked (event) {
+    console.log(event.target.id);
+    var currentArticle = event.target.id;
+
+    if ( currentArticle == "desktop_frame_1")  { window.EB.clickthrough('article-1-Click');}
+    else if ( currentArticle == "desktop_frame_2")  { window.EB.clickthrough('article-2-Click');}
+    else if ( currentArticle == "desktop_frame_3")  { window.EB.clickthrough('article-3-Click');}
+    else if ( currentArticle == "desktop_frame_4")  { window.EB.clickthrough('article-4-Click');}
+    else if ( currentArticle == "desktop_frame_5")  { window.EB.clickthrough('article-5-Click');}
+    else if ( currentArticle == "desktop_frame_6")  { window.EB.clickthrough('article-6-Click');}
+}
+
+
+
+
 function onHeroLogoClk(e){
-    EB.clickthrough('Hero_Logo_Click');
+    window.EB.clickthrough('Hero_Logo_Click');
 }
 
 function onBgClk(e){
-    EB.clickthrough('Background_Click');
+    window.EB.clickthrough('Background_Click');
 }
 
 function onHeroFrameClk(e){
-    EB.clickthrough('Hero_Frame_Click');
+    console.log("hero clicked");
+    window.EB.clickthrough('Hero_Frame_Click');
 }
 
 function onFailsafeClk(e){
-    EB.clickthrough('Failsafe_Click');
+    window.EB.clickthrough('Failsafe_Click');
 }
 
 function onDesktopFrameClk(frameNum){
     switch(frameNum){
         case 1:
             fireNounTracking('Article_Frame_1_Click', creativeConfigObj.articleFrames[0].url);
-            EB.clickthrough('Article_Frame_1_Click', creativeConfigObj.articleFrames[0].url);
+            window.EB.clickthrough('Article_Frame_1_Click', creativeConfigObj.articleFrames[0].url);
             break;
         case 2:
             fireNounTracking('Article_Frame_2_Click', creativeConfigObj.articleFrames[1].url);
-            EB.clickthrough('Article_Frame_2_Click', creativeConfigObj.articleFrames[1].url);
+            window.EB.clickthrough('Article_Frame_2_Click', creativeConfigObj.articleFrames[1].url);
             break;
         case 3:
             fireNounTracking('Article_Frame_3_Click', creativeConfigObj.articleFrames[2].url);
-            EB.clickthrough('Article_Frame_3_Click', creativeConfigObj.articleFrames[2].url);
+            window.EB.clickthrough('Article_Frame_3_Click', creativeConfigObj.articleFrames[2].url);
             break;
         case 4:
             fireNounTracking('Article_Frame_4_Click', creativeConfigObj.articleFrames[3].url);
-            EB.clickthrough('Article_Frame_4_Click', creativeConfigObj.articleFrames[3].url);
+            window.EB.clickthrough('Article_Frame_4_Click', creativeConfigObj.articleFrames[3].url);
             break;
         case 5:
             fireNounTracking('Article_Frame_5_Click', creativeConfigObj.articleFrames[4].url);
-            EB.clickthrough('Article_Frame_5_Click', creativeConfigObj.articleFrames[4].url);
+            window.EB.clickthrough('Article_Frame_5_Click', creativeConfigObj.articleFrames[4].url);
             break;
         case 6:
             fireNounTracking('Article_Frame_6_Click', creativeConfigObj.articleFrames[5].url);
-            EB.clickthrough('Article_Frame_6_Click', creativeConfigObj.articleFrames[5].url);
+            window.EB.clickthrough('Article_Frame_6_Click', creativeConfigObj.articleFrames[5].url);
             break;
         default:
     }
@@ -647,7 +553,7 @@ function sendMessage(type, data) {
 	//		the custom script's messageHandlers object, so the case must match.
 
 	if (!data.type) data.type = type;
-	EB._sendMessage(type, data);
+	window.EB._sendMessage(type, data);
 }
 
 function addCustomScriptEventListener(eventName, callback, interAd) {
