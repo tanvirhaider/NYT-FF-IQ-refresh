@@ -1,0 +1,93 @@
+
+
+
+
+ #desktopHeroContainer{
+    width: calc( 100% - 650px);
+    height: 100%;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+   // z-index: 100;
+
+    @include breakpoint(small) {
+        width: calc( 100% - 270px);
+    }
+
+    @include breakpoint(medium) {
+        width: calc( 100% - 450px);
+    }
+
+    @include breakpoint(large) {
+        width: calc( 100% - 650px);
+    }
+
+    .hero {
+        position: relative;
+        height: 100%;
+        background-position: 50% 50%;
+        background-size: cover;
+
+        .hero_copyContainer{
+            width: auto;
+            height: auto;
+            position: absolute;
+            text-align: left;
+        
+            width: calc(100% - 50px);
+            bottom: 25px;
+            left: 25px;
+        }
+
+        .hero_kicker{
+            width: auto;
+            height: auto;
+            font-family: "Proxima N W01 Reg";
+            font-size: 13px;
+            line-height: 14px;
+        }
+
+        .hero_headline{
+            width: auto;
+            height: auto;
+            font-family: "Proxima N W02 Smbd";
+            padding-top: 3px;
+            font-size: 27px;
+            line-height: 28px;
+        }
+
+        .hero_descriptor{
+            width: auto;
+            height: auto;
+            font-family: "Proxima N W01 Reg";
+            padding-top: 5px;
+            font-size: 18px;
+            line-height: 19px;
+        }
+
+        .hero_logo{
+            position: absolute;
+            z-index: 200;
+            top: 25px;
+            left: 25px;
+            height: 45px;
+            max-height: 45px;
+            max-width: 145px;
+        }
+        
+        
+        
+        .hero_logo img{
+            width: auto;
+            height: 45px;
+            max-height: 45px;
+            max-width: 145px;
+        }
+        
+        
+    }
+
+    
+}
+
+

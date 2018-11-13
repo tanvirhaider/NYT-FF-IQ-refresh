@@ -1,0 +1,124 @@
+
+
+$largeBreakpoint: 650px;
+$mediuBreakpoint: 450px;
+$smallBreakpoint: 250px;
+
+
+@import 'reset';
+@import 'font';
+@import 'slick';
+@import 'slick-theme';
+@import 'mixin';
+
+
+
+
+body{
+    -webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+
+    -webkit-text-size-adjust: none;
+    zoom: 100%;
+}
+
+/* --------------------- */
+/* -----> GENERAL <----- */
+/* --------------------- */
+#adWrapper{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+    //visibility: hidden;
+
+        #desktopContainer, #desktopFailsafe{
+            visibility: visible;
+        }
+
+    #adContainer{
+        height: 270px;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        min-width: 320px;
+        max-width: 1605px;
+        margin: auto;
+        overflow: hidden;
+        background-color: #252525;
+        cursor: pointer;
+        font-family: "Proxima N W01 Reg";
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+
+
+/* ------------------------------- */
+/* -----> MAIN CONTENT AREA <----- */
+/* ------------------------------- */
+#contentContainer, #failsafeContainer{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    visibility: hidden;
+    display: none;
+}
+
+#desktopFailsafe{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+}
+
+
+
+#desktopContainer{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+
+    @import 'hero';
+    @import 'content';
+
+
+}
+
+
+
+.grad{
+    width: 100%;
+    height: 80%;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    /*background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.7) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.7) 100%);*/
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#b3000000',GradientType=0 );
+}
+
+
+
+
+
+
+
+

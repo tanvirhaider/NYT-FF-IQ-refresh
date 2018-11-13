@@ -1,0 +1,103 @@
+
+
+.common-nav-attributes {
+    width: 40px;
+    height: 100%;
+    position: absolute;
+    pointer-events: auto;
+}
+
+.common-arrow-btn-attributes {
+    width: 100%;
+    height: 40px;
+    position: absolute;
+    bottom: 50%;
+    margin-bottom: -20px;
+    overflow: hidden;
+    z-index: 100;
+    pointer-events: auto;
+}
+
+
+
+#desktopLeftArrowContainer {
+    @extend .common-nav-attributes;
+    left: 0px;
+
+    .leftArrowBtn {
+       // left: 3px;
+        @extend .common-arrow-btn-attributes;
+
+        .leftArrow {
+
+            width: 15px;
+            height: 15px;
+            position: absolute;
+            top: 50%;
+
+            left: 19px;
+            border-left: 1px solid #4c4c4c;;
+            border-top: 1px solid #4c4c4c;
+            -webkit-transform: rotate(-45deg) skew(6deg, 6deg) translate3d(0, 0, 0);
+            transform: rotate(-45deg) skew(6deg, 6deg) translate3d(0, 0, 0);
+            margin-top:-7px; 
+
+            &:hover {
+                border-left: 1px solid white;
+                border-top: 1px solid white;
+            }
+        }
+    }
+
+}
+
+#desktopRightArrowContainer {
+    @extend .common-nav-attributes;
+    right: 0px;
+
+    .rightArrowBtn{
+        //right: 5px;
+        @extend .common-arrow-btn-attributes;
+
+        .rightArrow{
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            right: 12px;
+            top: 50%;
+            border-right: 1px solid white;
+            border-top: 1px solid white;
+            -webkit-transform: rotate(45deg) skew(-6deg, -6deg) translate3d(0, 0, 0);
+            transform: rotate(45deg) skew(-6deg, -6deg) translate3d(0, 0, 0);
+        
+            -webkit-transform-origin: top right;
+            transform-origin: top right;
+
+            &:hover {
+                border-right: 1px solid white;
+                border-top: 1px solid white;
+            }
+        }
+    }
+
+}
+
+
+
+
+      
+       
+
+        
+      
+        
+      
+       
+     
+        
+        #desktopLeftArrowContainer.active{
+            bottom: 0%;
+            opacity: 1;
+        }
+     
+        
