@@ -1,7 +1,7 @@
 
 
 
-// @codekit-prepend "jquery-3.3.1.min.js"
+// @codekit-prepend "jquery-3.3.1.js"
 // @codekit-prepend "slick.js"
 
 
@@ -75,6 +75,10 @@ function getFeed(url, version){
             goFailsafe();
             break;
     }
+}
+
+function openURL (whichURL) {
+    window.open(whichURL, "_blank");
 }
 
 function callAJAX(url, version){
@@ -231,7 +235,17 @@ function createFramesDesktop (heroFrameObj, articleFramesObj) {
 
     for(var i=0; i < totalNumberOfItem; i++){
         frameNum++;
-        document.getElementById("desktopGallery").appendChild(createArticleFrame(frameNum, "desktop", articleFramesObj[i].kicker, articleFramesObj[i].headline, articleFramesObj[i].descriptor,  articleFramesObj[i].cta, articleFramesObj[i].logo));
+        var createdFrame = createArticleFrame ({
+            layout: "desktop",
+            framenumber: frameNum,
+            kicker: articleFramesObj[i].kicker,
+            headline: articleFramesObj[i].headline,
+            descriptor: articleFramesObj[i].descriptor,
+            cta: articleFramesObj[i].cta,
+            logo: articleFramesObj[i].logo
+        });
+
+        document.getElementById("desktopGallery").appendChild(createdFrame);
     }
 
     desktopTotalGalleryFrames = frameNum;
@@ -321,7 +335,15 @@ function createHeroFrame(frameNum, layout, bgImgURL, kicker, headline, descripto
     return frame;
 }
 
-function createArticleFrame(frameNum, layout, kicker, headline, descriptor, cta, logo){
+function createArticleFrame(data){
+
+    var layout = data.layout;
+    var frameNum = data.framenumber;
+    var kicker = data.kicker;
+    var headline = data.headline;
+    var descriptor = data.descriptor;
+    var cta = data.cta;
+    var logo = data.logo;
 
     var frame = document.createElement("div");
     frame.id = layout + "_frame_" + frameNum;
@@ -476,41 +498,8 @@ function onFailsafeClk(e){
     window.EB.clickthrough('Failsafe_Click');
 }
 
-function onDesktopFrameClk(frameNum){
-    switch(frameNum){
-        case 1:
-            fireNounTracking('Article_Frame_1_Click', creativeConfigObj.articleFrames[0].url);
-            window.EB.clickthrough('Article_Frame_1_Click', creativeConfigObj.articleFrames[0].url);
-            break;
-        case 2:
-            fireNounTracking('Article_Frame_2_Click', creativeConfigObj.articleFrames[1].url);
-            window.EB.clickthrough('Article_Frame_2_Click', creativeConfigObj.articleFrames[1].url);
-            break;
-        case 3:
-            fireNounTracking('Article_Frame_3_Click', creativeConfigObj.articleFrames[2].url);
-            window.EB.clickthrough('Article_Frame_3_Click', creativeConfigObj.articleFrames[2].url);
-            break;
-        case 4:
-            fireNounTracking('Article_Frame_4_Click', creativeConfigObj.articleFrames[3].url);
-            window.EB.clickthrough('Article_Frame_4_Click', creativeConfigObj.articleFrames[3].url);
-            break;
-        case 5:
-            fireNounTracking('Article_Frame_5_Click', creativeConfigObj.articleFrames[4].url);
-            window.EB.clickthrough('Article_Frame_5_Click', creativeConfigObj.articleFrames[4].url);
-            break;
-        case 6:
-            fireNounTracking('Article_Frame_6_Click', creativeConfigObj.articleFrames[5].url);
-            window.EB.clickthrough('Article_Frame_6_Click', creativeConfigObj.articleFrames[5].url);
-            break;
-        default:
-    }
-}
-//************** NOTE END **************//
 
-// For use with IE 10 only
-function onIE10LeftArrowContainerClk(e){
-    onDesktopFrameClk(desktopCurrentGalleryFrame);
-}
+
 
 
 function verticalyAlignText(obj){
