@@ -398,27 +398,6 @@
 		"oA": 1,
 		"oAP": "/build/build",
 		"oF": 0
-		},
-	"/build2.zip": {
-		"cB": 0,
-		"ft": 8192,
-		"oA": 0,
-		"oAP": "/build/build2.zip",
-		"oF": 0
-		},
-	"/build3.zip": {
-		"cB": 0,
-		"ft": 8192,
-		"oA": 0,
-		"oAP": "/build/build3.zip",
-		"oF": 0
-		},
-	"/build4.zip": {
-		"cB": 0,
-		"ft": 8192,
-		"oA": 0,
-		"oAP": "/build/build4.zip",
-		"oF": 0
 		}
 	},
 "hooks": [
