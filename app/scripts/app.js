@@ -1,7 +1,7 @@
 
 
 
-// @codekit-prepend "jquery-3.3.1.js"
+
 // @codekit-prepend "slick.js"
 
 
@@ -26,19 +26,11 @@ var desktopCurrentGalleryFrame = 1;
 var desktopGalleryFramePosArr = [];
 var totalNumberOfItem;
 
+var listenerQueue;
+var creativeIFrameId;
 
-function checkIfAdKitReady(event) {
-    try {
-		if (window.localPreview) {
-			window.adkit.onReady(function() {
-				window.initializeLocalPreview(); 
-				initializeCreative();
-			});
-			return;
-		} else {window.localPreview = false;}
-	} catch (e) {window.localPreview = false;}
-	if (window.adkit) {window.adkit.onReady(initializeCreative);} else {initializeCreative();}
-}
+
+
 
 function initializeCreative() {
 	typeof Modernizr == "object" && (Modernizr.touch = Modernizr.touch || "ontouchstart" in window);
@@ -83,7 +75,8 @@ function openURL (whichURL) {
 
 function callAJAX(url, version){
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function(){ if(this.readyState === 4){ if(this.status === 200){ if(version === "json"){ handleReturnedFeedData(JSON.parse(xhttp.responseText)); }else{ handleReturnedFeedData(xhttp.responseXML); } }else if(this.status >= 400){  goFailsafe();} } };
+    xhttp.onreadystatechange = function(){ if(this.readyState === 4){ if(this.status === 200){ if(version === "json"){ handleReturnedFeedData(JSON.parse(xhttp.responseText)); }
+    else{ handleReturnedFeedData(xhttp.responseXML); } }else if(this.status >= 400){  goFailsafe();} } };
     xhttp.open("GET", url, true);
     xhttp.send();
 }
@@ -229,7 +222,7 @@ function trimCopy(div, maxLines){
 
 
 function createFramesDesktop (heroFrameObj, articleFramesObj) {
-    console.log("createFramesDesktop");
+   
     var frameNum = 0;
     document.getElementById("desktopHeroContainer").appendChild(createHeroFrame(frameNum, "desktop", heroFrameObj.backgroundImageURL.desktop, heroFrameObj.kicker, heroFrameObj.headline, heroFrameObj.descriptor, heroFrameObj.logo));
 
@@ -242,7 +235,8 @@ function createFramesDesktop (heroFrameObj, articleFramesObj) {
             headline: articleFramesObj[i].headline,
             descriptor: articleFramesObj[i].descriptor,
             cta: articleFramesObj[i].cta,
-            logo: articleFramesObj[i].logo
+            logo: articleFramesObj[i].logo,
+            clickThrough: articleFramesObj[i].url
         });
 
         document.getElementById("desktopGallery").appendChild(createdFrame);
@@ -259,13 +253,13 @@ function createFramesDesktop (heroFrameObj, articleFramesObj) {
         draggable: false,
         responsive: [
             {
-                breakpoint: 1024,
+                breakpoint: 1280,
                 settings: {
                     slidesToShow: 2
                 }
             },
             {
-                breakpoint: 850,
+                breakpoint: 1024,
                 settings: {
                     slidesToShow: 1,
                     dots: true
@@ -273,6 +267,24 @@ function createFramesDesktop (heroFrameObj, articleFramesObj) {
             }
         ]
     });
+
+    fixCloneEventListenerIssue ();
+}
+
+function fixCloneEventListenerIssue () {
+
+    var clonedItems = document.getElementsByClassName("slick-cloned");
+    console.log("number of cloned item: ",clonedItems.length);
+
+    for (var i = 0; i < clonedItems.length; i++) {
+        var currentItem = clonedItems[i].firstChild.firstChild;
+        currentItem.addEventListener("click", articleClicked, false)
+       // console.log(currentItem);
+    }
+
+ 
+
+
 }
 
 
@@ -344,10 +356,16 @@ function createArticleFrame(data){
     var descriptor = data.descriptor;
     var cta = data.cta;
     var logo = data.logo;
+    var clickThrough = data.clickThrough;
 
     var frame = document.createElement("div");
     frame.id = layout + "_frame_" + frameNum;
     frame.className = "frame";
+
+
+    frame.setAttribute('data-exit', clickThrough);
+    frame.setAttribute('data-index-number', frameNum);
+    //console.debug(event.target.dataset.indexNumber);    
    
     var frameLogoContainer = document.createElement("div");
     frameLogoContainer.id = layout + "_frame_" + frameNum + "_logo";
@@ -379,7 +397,7 @@ function createArticleFrame(data){
     if(headline.color !== "" && headline.color !== null){frameHeadline.style.color = headline.color;}
     frameCopyContainer.appendChild(frameHeadline);
 
-    frame.addEventListener("click", articleClicked, false)
+    frame.addEventListener("click", articleClicked, false);
     return frame;
 }
 
@@ -390,10 +408,6 @@ function setLeftNavActive(){
     
 }
 
-function setLeftNavInactive(){
-    document.getElementById("desktopLeftArrowContainer").style.display = "block"; 
-    
-}
 
 function desktopGoPrevFrame(){
     var nextFrame = desktopCurrentGalleryFrame - 1;
@@ -410,34 +424,6 @@ function desktopGoNextFrame(){
 
 
 
-/*-----> TRACKING <-----*/
-function fireNounTracking(interaction, noun){
-    // MDX 2.0 and MDX NXT use different noun tracking URLs
-    // The below will auto detect which platform the unit is running and set the appropriate base URL
-    var isNXT = (adId.toString().length >= 10);
-    var baseURL = (isNXT)?"https://bs.serving-sys.com/BurstingPipe/adServer.bs?cn=tf&c=19&mc=imp&pli=16478984&PluID=0&ord=%time%&rtu=-1&pcp=$$adID=" 
-    + adId 
-    + "|vId=" 
-    + versionID 
-    + "|interactionName=" : "https://bs.serving-sys.com/Serving/adServer.bs?cn=display&c=19&pli=1073952795&adid=1073972634&ord=[timestamp]&rtu=-1&pcp=$$adID=" 
-    + adId 
-    + "|vID=" 
-    + versionID 
-    + "|interactionName=";
-
-    var pixel = new Image();
-    pixel.src = baseURL + interaction + "|noun=" + noun + "$$";
-
-    try{
-        if(localPreview === true){
-            console.log(baseURL + interaction + "|noun=" + noun + "$$");
-        }
-    }catch(err){}
-}
-
-/*-----------------------------*/
-/*-----> EVENT LISTENERS <-----*/
-/*-----------------------------*/
 function showDesktopLeftNav(e){
     setLeftNavActive();
 }
@@ -467,18 +453,20 @@ function onDesktopRightArrowClk(e){
 /*-----> CLICK OUTS <-----*/
 
 function articleClicked (event) {
-    console.log(event.target.id);
-    var currentArticle = event.target.id;
+   // console.log(event.target.dataset.exit);
+    // console.log(event.target.id);
+    var currentArticle = event.target.dataset.indexNumber;
+    var clickThroughURL = event.target.dataset.exit
 
-    if ( currentArticle == "desktop_frame_1")  { window.EB.clickthrough('article-1-Click');}
-    else if ( currentArticle == "desktop_frame_2")  { window.EB.clickthrough('article-2-Click');}
-    else if ( currentArticle == "desktop_frame_3")  { window.EB.clickthrough('article-3-Click');}
-    else if ( currentArticle == "desktop_frame_4")  { window.EB.clickthrough('article-4-Click');}
-    else if ( currentArticle == "desktop_frame_5")  { window.EB.clickthrough('article-5-Click');}
-    else if ( currentArticle == "desktop_frame_6")  { window.EB.clickthrough('article-6-Click');}
+    if ( currentArticle == "1")         { window.EB.clickthrough('article-1-Click');}
+    else if ( currentArticle == "2")    { window.EB.clickthrough('article-2-Click');}
+    else if ( currentArticle == "3")    { window.EB.clickthrough('article-3-Click');}
+    else if ( currentArticle == "4")    { window.EB.clickthrough('article-4-Click');}
+    else if ( currentArticle == "5")    { window.EB.clickthrough('article-5-Click');}
+    else if ( currentArticle == "6")    { window.EB.clickthrough('article-6-Click');}
+
+    openURL (clickThroughURL);
 }
-
-
 
 
 function onHeroLogoClk(e){
@@ -499,9 +487,6 @@ function onFailsafeClk(e){
 }
 
 
-
-
-
 function verticalyAlignText(obj){
 	var parentContainerHeight 	= obj.parentNode.offsetHeight;
 	var copyContainerHeight		= obj.offsetHeight;
@@ -510,12 +495,6 @@ function verticalyAlignText(obj){
 }
 
 
-/*------------------------------*/
-/*-----> BASE FORMAT CODE <-----*/
-/*------------------------------*/
-/*******************
-UTILITIES
-*******************/
 function setCreativeVersion() {
 	sendMessage("setCreativeVersion", {
 		creativeId: creativeId + " - " + templateName,
@@ -526,21 +505,12 @@ function setCreativeVersion() {
 }
 
 function onPageScroll(event) {
-	// use scrollPos anywhere to know the current x/y coordinates.
 	scrollPos.x = event.scrollXPercent;
 	scrollPos.y = event.scrollYPercent;
 }
 
-/*********************************
-HTML5 Event System - Do Not Modify
-*********************************/
-var listenerQueue;
-var creativeIFrameId;
 
 function sendMessage(type, data) {
-	//note: the message type we're sending is also the name of the function inside
-	//		the custom script's messageHandlers object, so the case must match.
-
 	if (!data.type) data.type = type;
 	window.EB._sendMessage(type, data);
 }
@@ -620,9 +590,18 @@ function eventManager(event) {
 }
 
 
-
-
-
+function checkIfAdKitReady(event) {
+    try {
+		if (window.localPreview) {
+			window.adkit.onReady(function() {
+				window.initializeLocalPreview(); 
+				initializeCreative();
+			});
+			return;
+		} else {window.localPreview = false;}
+	} catch (e) {window.localPreview = false;}
+	if (window.adkit) {window.adkit.onReady(initializeCreative);} else {initializeCreative();}
+}
 
 
 window.addEventListener("load", checkIfAdKitReady);

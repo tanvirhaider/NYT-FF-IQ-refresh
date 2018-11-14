@@ -8,6 +8,7 @@
     position: absolute;
     bottom: 0px;
     left: 0px;
+    transition: ease 0.3s;
    // z-index: 100;
 
     @include breakpoint(small) {
